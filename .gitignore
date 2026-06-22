@@ -1,0 +1,27 @@
+node_modules
+dist
+.vite
+.DS_Store
+npm-debug.log*
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfvars
+!*.tfvars.example
+backend.hcl
+.rendered-k8s/
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
