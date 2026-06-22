@@ -1,0 +1,47 @@
+name: Booking Service CI/CD
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Production release version, for example v1.0.0"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  ci:
+    name: Booking Service CI
+    if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' }}
+    uses: Quickslot-Capstone-Project/Parking-System/.github/workflows/reusable-ci.yml@master
+    with:
+      trigger_event: ${{ github.event_name }}
+      source_sha: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      service_name: booking-service
+      image_name: booking-service
+      helm_values_key: bookingService
+      docker_context: ./booking-service
+      dockerfile_path: ./booking-service/Dockerfile
+      working_directory: ./booking-service
+      sonar_key: Quickslot-Capstone-Project_Parking-System-booking-service
+    secrets: inherit
+
+  release:
+    name: Release Booking Service
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    uses: Quickslot-Capstone-Project/Parking-System/.github/workflows/reusable-release.yml@master
+    with:
+      release_tag: ${{ inputs.release_tag }}
+      service_name: booking-service
+      image_name: booking-service
+      helm_values_key: bookingService
+    secrets: inherit
